@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+data/cuad/
+data/cuad_data_temp/
+__pycache__/
+*.pyc
+.venv/
+venv/
