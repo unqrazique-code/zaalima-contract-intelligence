@@ -27,9 +27,9 @@ cd data/cuad && unzip data.zip -d extracted && cd ../..
 - [x] Day 1-2: `src/load_data.py` — flattens CUAD's nested SQuAD-style JSON
   into `data/processed/cuad_flat.jsonl` (20,910 contract/category rows across
   510 contracts).
-- [ ] Day 3-5: OCR pipeline (Tesseract/pdf2image) for raw PDF ingestion —
-  needed since CUAD ships pre-extracted text, but real-world contracts will
-  come in as scanned/native PDFs.
+- [x] Day 3-5: `src/ocr_pipeline.py` — hybrid pipeline: native text
+  extraction via pdfplumber first, falls back to Tesseract OCR per-page for
+  scanned/image-only PDFs. Tested on both native-text and scanned samples.
 - [x] Day 6-7: `src/baseline_ner.py` — spaCy `en_core_web_sm` baseline entity
   extraction (ORG, DATE, MONEY, GPE, PERSON). Rough but functional; fine-tuning
   in Week 2 will sharpen this significantly.
