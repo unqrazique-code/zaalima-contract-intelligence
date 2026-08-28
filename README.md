@@ -34,7 +34,20 @@ cd data/cuad && unzip data.zip -d extracted && cd ../..
   extraction (ORG, DATE, MONEY, GPE, PERSON). Rough but functional; fine-tuning
   in Week 2 will sharpen this significantly.
 
-### Week 2 — Advanced NLP & Fine-Tuning (not started)
+### Week 2 — Advanced NLP & Fine-Tuning
+- [x] Day 1 (prep): `src/prepare_training_data.py` — splits the flattened CUAD
+  data into train/val at the *contract* level (no leakage): 17,794 train /
+  3,116 val examples across 510 contracts.
+- [x] Day 1-4: `notebooks/train_transformer_kaggle.ipynb` — fine-tunes
+  `roberta-base` on 5 key clause categories (Termination For Convenience,
+  Anti-Assignment, Governing Law, Cap On Liability, Non-Compete). Runs on
+  Kaggle (GPU required, not runnable in this sandbox due to no Hugging Face
+  Hub access here).
+- [x] Day 5-7: `src/train_classical_baseline.py` — TF-IDF + Logistic
+  Regression baseline for the same categories, for comparison against the
+  fine-tuned transformer. **Result: 0.668 average F1** across 5 categories
+  (see `data/processed/classical_baseline_results.json`).
+
 ### Week 3 — Vector Search & API (not started)
 ### Week 4 — Integration & Productionization (not started)
 
@@ -43,9 +56,14 @@ cd data/cuad && unzip data.zip -d extracted && cd ../..
 contract-intelligence/
 ├── data/
 │   ├── cuad/            # cloned dataset (gitignored)
-│   └── processed/       # flattened, training-ready data
+│   └── processed/       # flattened + train/val split data, results
+├── notebooks/
+│   └── train_transformer_kaggle.ipynb   # Week 2 Day 1-4, run on Kaggle
 ├── src/
-│   ├── load_data.py     # Day 1-2
-│   └── baseline_ner.py  # Day 6-7
+│   ├── load_data.py               # Day 1-2
+│   ├── ocr_pipeline.py            # Day 3-5
+│   ├── baseline_ner.py            # Day 6-7
+│   ├── prepare_training_data.py   # Week 2 prep
+│   └── train_classical_baseline.py # Week 2 Day 5-7
 └── requirements.txt
 ```

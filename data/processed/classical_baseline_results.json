@@ -1,0 +1,47 @@
+[
+  {
+    "category": "Termination For Convenience",
+    "train_size": 434,
+    "val_size": 76,
+    "accuracy": 0.579,
+    "precision": 0.452,
+    "recall": 0.483,
+    "f1": 0.467
+  },
+  {
+    "category": "Anti-Assignment",
+    "train_size": 434,
+    "val_size": 76,
+    "accuracy": 0.816,
+    "precision": 0.844,
+    "recall": 0.931,
+    "f1": 0.885
+  },
+  {
+    "category": "Governing Law",
+    "train_size": 434,
+    "val_size": 76,
+    "accuracy": 0.855,
+    "precision": 0.886,
+    "recall": 0.954,
+    "f1": 0.919
+  },
+  {
+    "category": "Cap On Liability",
+    "train_size": 434,
+    "val_size": 76,
+    "accuracy": 0.658,
+    "precision": 0.696,
+    "recall": 0.727,
+    "f1": 0.711
+  },
+  {
+    "category": "Non-Compete",
+    "train_size": 434,
+    "val_size": 76,
+    "accuracy": 0.671,
+    "precision": 0.389,
+    "recall": 0.333,
+    "f1": 0.359
+  }
+]
