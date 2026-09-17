@@ -2,6 +2,10 @@
 
 Zaalima Development — Data Science & ML Internship, Project 1 (Month 1)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://zaalima-contract-intelligence.streamlit.app/)
+
+> 🚀 **[Try the live demo → zaalima-contract-intelligence.streamlit.app](https://zaalima-contract-intelligence.streamlit.app/)**
+
 ## What this is
 An NLP system that ingests legal contracts, extracts key entities (dates,
 parties, jurisdictions), classifies clauses (termination, confidentiality,
