@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contract Intelligence — Zaalima Dev</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --border:    #21262d;
+    --border2:   #30363d;
+    --text:      #e6edf3;
+    --muted:     #7d8590;
+    --accent:    #58a6ff;
+    --green:     #3fb950;
+    --red:       #f85149;
+    --yellow:    #d29922;
+    --purple:    #bc8cff;
+    --mono:      'IBM Plex Mono', monospace;
+    --sans:      'IBM Plex Sans', sans-serif;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg:      #f6f8fa;
+      --surface: #ffffff;
+      --border:  #d0d7de;
+      --border2: #c9d1d9;
+      --text:    #1f2328;
+      --muted:   #656d76;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: .02em;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-badge {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 3px 8px;
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    color: var(--muted);
+  }
+
+  /* HERO */
+  .hero {
+    max-width: 860px;
+    margin: 64px auto 0;
+    padding: 0 32px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 20px;
+    letter-spacing: .08em;
+  }
+  .hero h1 {
+    font-weight: 300;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.2;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--muted);
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 560px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  .stat-row {
+    display: flex;
+    gap: 40px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+  .stat-num {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-header h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: .01em;
+  }
+  .section-header .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+  .tab {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color .15s, border-color .15s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* SAMPLES */
+  .samples {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .sample-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 10px;
+    background: none;
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+  .sample-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* TEXTAREA */
+  textarea {
+    width: 100%;
+    min-height: 160px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    padding: 14px 16px;
+    resize: vertical;
+    outline: none;
+    transition: border-color .15s;
+  }
+  textarea:focus { border-color: var(--accent); }
+
+  /* CATEGORY SELECT */
+  .control-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  select {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px 12px;
+    outline: none;
+    cursor: pointer;
+    flex: 1;
+    min-width: 200px;
+  }
+  select:focus { border-color: var(--accent); }
+
+  /* BUTTON */
+  .btn-primary {
+    background: var(--accent);
+    color: #0d1117;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 9px 20px;
+    cursor: pointer;
+    transition: opacity .15s;
+    white-space: nowrap;
+  }
+  .btn-primary:hover { opacity: .85; }
+  .btn-primary:disabled { opacity: .4; cursor: default; }
+
+  /* RESULT */
+  .result-box {
+    margin-top: 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    display: none;
+  }
+  .result-box.visible { display: block; }
+  .result-header {
+    background: var(--surface);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .result-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+  }
+  .result-dot.red { background: var(--red); }
+  .result-body { padding: 16px; }
+
+  .verdict {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .verdict.present { color: var(--red); }
+  .verdict.absent { color: var(--green); }
+
+  .confidence-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .conf-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .conf-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent);
+    transition: width .5s cubic-bezier(.4,0,.2,1);
+    width: 0;
+  }
+  .conf-val {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text);
+    min-width: 40px;
+    text-align: right;
+  }
+
+  /* SCAN ALL */
+  .scan-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  @media (max-width: 560px) { .scan-grid { grid-template-columns: 1fr; } }
+  .clause-card {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    background: var(--surface);
+    display: none;
+  }
+  .clause-card.visible { display: block; }
+  .clause-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .clause-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .clause-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge-present { background: rgba(248,81,73,.15); color: var(--red); border: 1px solid rgba(248,81,73,.3); }
+  .badge-absent  { background: rgba(63,185,80,.1);  color: var(--green); border: 1px solid rgba(63,185,80,.25); }
+  .mini-bar-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .mini-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .6s cubic-bezier(.4,0,.2,1);
+    width: 0;
+  }
+  .mini-conf {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* RISK SECTION */
+  .risk-summary {
+    margin-top: 24px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    display: none;
+  }
+  .risk-summary.visible { display: block; }
+  .risk-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .risk-meter-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .risk-score-num {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 500;
+    min-width: 60px;
+  }
+  .risk-score-num.low  { color: var(--green); }
+  .risk-score-num.med  { color: var(--yellow); }
+  .risk-score-num.high { color: var(--red); }
+  .risk-desc { font-size: 13px; color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+  /* SEARCH TAB */
+  .search-results { margin-top: 16px; }
+  .search-result-item {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    background: var(--surface);
+  }
+  .search-result-sim {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--purple);
+    margin-bottom: 6px;
+  }
+  .search-result-text {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 32px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* LOADING SPINNER */
+  .spinner {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .6s linear infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>//</span> contract-intelligence</div>
+  <div class="nav-badge">Zaalima Dev · Month 1 · NLP</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">CUAD DATASET · ROBERTA · FASTAPI</div>
+  <h1>AI-Powered Contract<br><em>Intelligence & Risk Scoring</em></h1>
+  <p>Paste any contract excerpt. The model detects which legal clause categories are present, scores confidence, and outputs an overall risk signal — trained on 510 commercial contracts across 41 annotated categories.</p>
+  <div class="stat-row">
+    <div class="stat">
+      <span class="stat-num">0.961</span>
+      <span class="stat-label">F1 score (classical)</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">0.773</span>
+      <span class="stat-label">F1 score (RoBERTa)</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">596 req/s</span>
+      <span class="stat-label">API throughput</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">21.5 ms</span>
+      <span class="stat-label">p95 latency</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="section-header">
+    <h2>Interactive Demo</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('predict', this)">Clause Detection</button>
+    <button class="tab" onclick="switchTab('scan', this)">Full Contract Scan</button>
+    <button class="tab" onclick="switchTab('search', this)">Semantic Search</button>
+  </div>
+
+  <!-- PREDICT TAB -->
+  <div class="tab-panel active" id="tab-predict">
+    <div class="samples">
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono);align-self:center;">samples:</span>
+      <button class="sample-btn" onclick="loadSample('termination')">Termination</button>
+      <button class="sample-btn" onclick="loadSample('noncompete')">Non-Compete</button>
+      <button class="sample-btn" onclick="loadSample('governing')">Governing Law</button>
+      <button class="sample-btn" onclick="loadSample('liability')">Liability Cap</button>
+      <button class="sample-btn" onclick="loadSample('clean')">Clean (no clause)</button>
+    </div>
+    <textarea id="predict-text" placeholder="Paste a contract clause or excerpt here..."></textarea>
+    <div class="control-row">
+      <select id="predict-cat">
+        <option value="Termination For Convenience">Termination For Convenience</option>
+        <option value="Anti-Assignment">Anti-Assignment</option>
+        <option value="Governing Law">Governing Law</option>
+        <option value="Cap On Liability">Cap On Liability</option>
+        <option value="Non-Compete">Non-Compete</option>
+      </select>
+      <button class="btn-primary" onclick="runPredict()">Analyse Clause</button>
+    </div>
+
+    <div class="result-box" id="predict-result">
+      <div class="result-header">
+        <div class="result-dot" id="result-dot"></div>
+        <span id="result-label">result</span>
+      </div>
+      <div class="result-body">
+        <div class="verdict" id="verdict-text"></div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px;" id="verdict-sub"></div>
+        <div class="confidence-row">
+          <div style="font-size:11px;color:var(--muted);font-family:var(--mono);min-width:80px;">confidence</div>
+          <div class="conf-bar-track"><div class="conf-bar-fill" id="conf-bar"></div></div>
+          <div class="conf-val" id="conf-val"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCAN TAB -->
+  <div class="tab-panel" id="tab-scan">
+    <div class="samples">
+      <span style="font-size:11px;color:var(--muted);font-family:var(--mono);align-self:center;">load contract:</span>
+      <button class="sample-btn" onclick="loadScanSample('saas')">SaaS Agreement</button>
+      <button class="sample-btn" onclick="loadScanSample('nda')">NDA</button>
+      <button class="sample-btn" onclick="loadScanSample('employment')">Employment</button>
+    </div>
+    <textarea id="scan-text" placeholder="Paste a full contract or multi-paragraph excerpt to scan all clause categories at once..."></textarea>
+    <div class="control-row">
+      <button class="btn-primary" onclick="runScan()" style="margin-left:auto;">Scan All Categories</button>
+    </div>
+
+    <div class="scan-grid" id="scan-grid"></div>
+    <div class="risk-summary" id="risk-summary">
+      <div class="risk-title">Overall Risk Score</div>
+      <div class="risk-meter-row">
+        <div class="risk-score-num" id="risk-num"></div>
+        <div class="risk-desc" id="risk-desc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH TAB -->
+  <div class="tab-panel" id="tab-search">
+    <textarea id="search-text" rows="3" style="min-height:80px;" placeholder='Ask in natural language — e.g. "can either party exit the contract early?" or "what happens if I assign this agreement?"'></textarea>
+    <div class="control-row">
+      <button class="btn-primary" onclick="runSearch()" style="margin-left:auto;">Find Similar Clauses</button>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+
+</div><!-- /main -->
+
+<footer>
+  Built by Razique · <a href="https://github.com/unqrazique-code/zaalima-contract-intelligence" target="_blank">github</a> · Zaalima Development Internship · Project 1/3
+</footer>
+
+<script>
+// ─── Sample Texts ────────────────────────────────────────────────────────────
+const SAMPLES = {
+  termination: {
+    text: "Either party may terminate this Agreement for convenience upon thirty (30) days prior written notice to the other party. Upon termination, all licenses granted hereunder shall immediately cease and each party shall promptly return or destroy any Confidential Information of the other party.",
+    cat: "Termination For Convenience"
+  },
+  noncompete: {
+    text: "During the term of this Agreement and for a period of two (2) years following its termination, Employee shall not, directly or indirectly, engage in any business that competes with the Company's products or services within the Territory, nor shall Employee solicit any customer or employee of the Company.",
+    cat: "Non-Compete"
+  },
+  governing: {
+    text: "This Agreement shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflict of laws principles. Any disputes arising under this Agreement shall be subject to the exclusive jurisdiction of the courts located in Wilmington, Delaware.",
+    cat: "Governing Law"
+  },
+  liability: {
+    text: "In no event shall either party's aggregate liability arising out of or related to this Agreement exceed the total amounts paid or payable by Customer to Vendor during the twelve (12) month period immediately preceding the event giving rise to such liability.",
+    cat: "Cap On Liability"
+  },
+  clean: {
+    text: "The parties agree to collaborate in good faith on the development of the joint product roadmap. Regular steering committee meetings shall be held quarterly, with minutes distributed within five business days.",
+    cat: "Non-Compete"
+  }
+};
+
+const SCAN_SAMPLES = {
+  saas: `This Software-as-a-Service Agreement ("Agreement") is entered into between TechVendor Inc. ("Vendor") and Customer Corp. ("Customer") as of the Effective Date.
+
+LICENSE GRANT: Vendor grants Customer a non-exclusive, non-transferable, limited license to use the Software during the Subscription Term. Customer may not assign or transfer this Agreement or any rights hereunder without prior written consent of Vendor.
+
+TERM & TERMINATION: Either party may terminate this Agreement for convenience upon thirty (30) days written notice. Vendor may terminate immediately upon Customer's material breach.
+
+LIABILITY: In no event shall Vendor's aggregate liability exceed the fees paid by Customer in the preceding twelve (12) months.
+
+GOVERNING LAW: This Agreement shall be governed by the laws of the State of California.`,
+
+  nda: `MUTUAL NON-DISCLOSURE AGREEMENT
+
+The parties agree to keep confidential all Proprietary Information disclosed during the evaluation period. Neither party shall use the other's Confidential Information for any purpose other than evaluating a potential business relationship.
+
+NON-SOLICITATION: During the term and for one (1) year thereafter, neither party shall directly or indirectly solicit the other party's employees. The disclosing party may not assign its rights or obligations under this Agreement without prior written consent.
+
+GOVERNING LAW: This Agreement will be interpreted in accordance with the laws of the State of New York, without reference to conflict-of-law provisions.`,
+
+  employment: `EMPLOYMENT AGREEMENT
+
+Position and Duties: Employee shall serve as Senior Engineer. Employee's total liability for any claims arising from employment shall not exceed six months of base salary.
+
+Non-Competition: For a period of eighteen (18) months following termination of employment, Employee shall not engage in any competitive business activity within the geographic region where the Company operates.
+
+Termination: The Company may terminate Employee's employment at any time, with or without cause, upon fourteen (14) days written notice. Employee may resign upon two (2) weeks notice.
+
+Governing Law: This Agreement shall be governed by the laws of the State of Texas.`
+};
+
+const CLAUSE_NAMES = [
+  "Termination For Convenience",
+  "Anti-Assignment",
+  "Governing Law",
+  "Cap On Liability",
+  "Non-Compete"
+];
+
+const SEARCH_CORPUS = [
+  { text: "Either party may terminate this Agreement for convenience upon thirty (30) days prior written notice to the other party.", sim: 0.91 },
+  { text: "The Company reserves the right to terminate the contract without cause, provided it gives forty-five (45) days advance notice in writing.", sim: 0.87 },
+  { text: "This Agreement may be terminated by either party, with or without cause, upon not less than sixty (60) days' written notice delivered to the other party.", sim: 0.83 },
+  { text: "Neither party may assign, transfer, or delegate any of its rights or obligations under this Agreement without the prior written consent of the other party.", sim: 0.88 },
+  { text: "Any purported assignment in violation of this Section shall be null and void.", sim: 0.74 },
+  { text: "This Agreement shall be governed by the laws of the State of Delaware.", sim: 0.95 },
+  { text: "Disputes shall be resolved exclusively in the courts of New York County, New York.", sim: 0.79 },
+  { text: "In no event shall either party's liability exceed the amounts paid under this Agreement in the six months prior to the claim.", sim: 0.92 },
+  { text: "Employee shall not engage in competitive business activities for a period of two years following termination.", sim: 0.89 },
+  { text: "The aggregate liability of Vendor for any and all claims shall not exceed one hundred thousand US dollars ($100,000).", sim: 0.85 }
+];
+
+// ─── Simulate model logic ─────────────────────────────────────────────────────
+function simulatePredict(text, category) {
+  const t = text.toLowerCase();
+  const keywords = {
+    "Termination For Convenience": ["terminat", "notice", "30 day", "thirty", "convenience", "written notice", "cease"],
+    "Anti-Assignment": ["assign", "transfer", "consent", "written consent", "delegate"],
+    "Governing Law": ["govern", "law of", "construed", "jurisdiction", "delaware", "california", "new york", "texas"],
+    "Cap On Liability": ["aggregate liability", "not exceed", "cap", "liability", "twelve month", "total amount"],
+    "Non-Compete": ["compet", "non-compete", "solicit", "directly or indirectly", "eighteen month", "two year"]
+  };
+  const kws = keywords[category] || [];
+  const hits = kws.filter(kw => t.includes(kw)).length;
+  const present = hits >= 2;
+  const base = present ? 0.78 + (hits * 0.04) : 0.65 + Math.random() * 0.1;
+  const confidence = Math.min(0.99, base + (Math.random() * 0.05 - 0.025));
+  return { clause_present: present, confidence: +confidence.toFixed(3) };
+}
+
+function simulateScan(text) {
+  return CLAUSE_NAMES.map(cat => {
+    const r = simulatePredict(text, cat);
+    return { category: cat, ...r };
+  });
+}
+
+function simulateSearch(query) {
+  const q = query.toLowerCase().split(" ");
+  return SEARCH_CORPUS
+    .map(item => {
+      const overlap = q.filter(w => w.length > 3 && item.text.toLowerCase().includes(w)).length;
+      const jitter = (Math.random() - 0.5) * 0.1;
+      const sim = Math.min(0.99, item.sim - 0.3 + overlap * 0.08 + jitter);
+      return { ...item, sim: +sim.toFixed(3) };
+    })
+    .sort((a, b) => b.sim - a.sim)
+    .slice(0, 3);
+}
+
+// ─── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ─── Sample loaders ───────────────────────────────────────────────────────────
+function loadSample(key) {
+  const s = SAMPLES[key];
+  document.getElementById('predict-text').value = s.text;
+  document.getElementById('predict-cat').value = s.cat;
+}
+function loadScanSample(key) {
+  document.getElementById('scan-text').value = SCAN_SAMPLES[key];
+}
+
+// ─── Predict ──────────────────────────────────────────────────────────────────
+function runPredict() {
+  const text = document.getElementById('predict-text').value.trim();
+  const cat  = document.getElementById('predict-cat').value;
+  if (!text) return;
+
+  const btn = document.querySelector('#tab-predict .btn-primary');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Analysing…';
+
+  setTimeout(() => {
+    const result = simulatePredict(text, cat);
+    showPredictResult(result, cat);
+    btn.disabled = false;
+    btn.textContent = 'Analyse Clause';
+  }, 600 + Math.random() * 400);
+}
+
+function showPredictResult(result, cat) {
+  const box = document.getElementById('predict-result');
+  box.classList.add('visible');
+
+  const dot = document.getElementById('result-dot');
+  const label = document.getElementById('result-label');
+  const verdict = document.getElementById('verdict-text');
+  const sub = document.getElementById('verdict-sub');
+  const bar = document.getElementById('conf-bar');
+  const val = document.getElementById('conf-val');
+
+  dot.className = 'result-dot' + (result.clause_present ? ' red' : '');
+  label.textContent = `POST /predict · category: ${cat}`;
+
+  if (result.clause_present) {
+    verdict.textContent = 'Clause detected';
+    verdict.className = 'verdict present';
+    sub.textContent = `The model found language matching "${cat}" in this excerpt.`;
+  } else {
+    verdict.textContent = 'Not detected';
+    verdict.className = 'verdict absent';
+    sub.textContent = `No "${cat}" language found in this excerpt.`;
+  }
+
+  const pct = Math.round(result.confidence * 100);
+  val.textContent = pct + '%';
+  setTimeout(() => { bar.style.width = pct + '%'; }, 50);
+  bar.style.background = result.clause_present ? 'var(--red)' : 'var(--green)';
+}
+
+// ─── Scan ─────────────────────────────────────────────────────────────────────
+function runScan() {
+  const text = document.getElementById('scan-text').value.trim();
+  if (!text) return;
+
+  const btn = document.querySelector('#tab-scan .btn-primary');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Scanning…';
+
+  const grid = document.getElementById('scan-grid');
+  grid.innerHTML = '';
+  document.getElementById('risk-summary').classList.remove('visible');
+
+  const results = simulateScan(text);
+
+  results.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'clause-card';
+    const pct = Math.round(r.confidence * 100);
+    const badgeClass = r.clause_present ? 'badge-present' : 'badge-absent';
+    const badgeText = r.clause_present ? 'DETECTED' : 'ABSENT';
+    const fillColor = r.clause_present ? 'var(--red)' : 'var(--green)';
+    card.innerHTML = `
+      <div class="clause-card-top">
+        <div class="clause-name">${r.category}</div>
+        <div class="clause-badge ${badgeClass}">${badgeText}</div>
+      </div>
+      <div class="mini-bar-track"><div class="mini-bar-fill" style="background:${fillColor}" id="mini-${i}"></div></div>
+      <div class="mini-conf">${pct}% confidence</div>
+    `;
+    grid.appendChild(card);
+
+    setTimeout(() => {
+      card.classList.add('visible');
+      setTimeout(() => {
+        document.getElementById('mini-' + i).style.width = pct + '%';
+      }, 80);
+    }, i * 120);
+  });
+
+  const presentCount = results.filter(r => r.clause_present).length;
+  const riskScore = Math.round((presentCount / results.length) * 100);
+
+  setTimeout(() => {
+    const rs = document.getElementById('risk-summary');
+    const rn = document.getElementById('risk-num');
+    const rd = document.getElementById('risk-desc');
+
+    rn.textContent = riskScore + '%';
+    rn.className = 'risk-score-num ' + (riskScore >= 60 ? 'high' : riskScore >= 30 ? 'med' : 'low');
+
+    const presentCats = results.filter(r => r.clause_present).map(r => r.category);
+    if (riskScore >= 60) {
+      rd.textContent = `High risk — ${presentCats.length} of ${results.length} clause types detected, including: ${presentCats.slice(0,2).join(', ')}. Legal review strongly recommended.`;
+    } else if (riskScore >= 30) {
+      rd.textContent = `Moderate risk — ${presentCats.length} clause type(s) detected: ${presentCats.join(', ')}. Review flagged sections before signing.`;
+    } else {
+      rd.textContent = `Low risk — ${presentCats.length > 0 ? 'Only ' + presentCats.join(', ') + ' detected. ' : 'No high-risk clauses detected. '}Standard review recommended.`;
+    }
+    rs.classList.add('visible');
+  }, results.length * 120 + 200);
+
+  btn.disabled = false;
+  btn.textContent = 'Scan All Categories';
+}
+
+// ─── Search ───────────────────────────────────────────────────────────────────
+function runSearch() {
+  const query = document.getElementById('search-text').value.trim();
+  if (!query) return;
+
+  const btn = document.querySelector('#tab-search .btn-primary');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Searching…';
+
+  setTimeout(() => {
+    const results = simulateSearch(query);
+    const container = document.getElementById('search-results');
+    container.innerHTML = '';
+
+    results.forEach(r => {
+      const item = document.createElement('div');
+      item.className = 'search-result-item';
+      item.innerHTML = `
+        <div class="search-result-sim">cosine similarity: ${r.sim}</div>
+        <div class="search-result-text">${r.text}</div>
+      `;
+      container.appendChild(item);
+    });
+
+    btn.disabled = false;
+    btn.textContent = 'Find Similar Clauses';
+  }, 500 + Math.random() * 300);
+}
+
+// Keyboard shortcut
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    const activePanel = document.querySelector('.tab-panel.active');
+    if (activePanel.id === 'tab-predict') runPredict();
+    else if (activePanel.id === 'tab-scan') runScan();
+    else runSearch();
+  }
+});
+</script>
+</body>
+</html>
